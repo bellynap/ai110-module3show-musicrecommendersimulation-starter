@@ -73,7 +73,15 @@ Use this section to document the experiments you ran. For example:
 - What happened when you changed the weight on genre from 2.0 to 0.5
 - What happened when you added tempo or valence to the score
 - How did your system behave for different types of users
+## Experiments You Tried
 
+### Default profile: pop / happy / energy 0.8
+![Top 5 recommendations for pop/happy profile](images/screenshot1.png)
+
+The top result was Sunrise City (score 3.98) which matched on genre, mood, 
+and energy. Gym Hero ranked second despite no mood match because the genre 
+match (+2.0) outweighed everything else. Songs with no genre or mood match 
+only appeared if their energy was very close to the target.
 ---
 
 ## Limitations and Risks
