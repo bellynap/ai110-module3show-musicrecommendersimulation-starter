@@ -138,6 +138,10 @@ Each Song is described by four qualities: its genre (like pop or lofi), its mood
 Each UserProfile stores that person's preferred genre, preferred mood, their ideal energy level, and their ideal tempo.
 The Recommender scores every song by checking how well it matches the user. A matching genre earns the most points (3), a matching mood earns slightly fewer (2), and songs whose energy and tempo are closest to the user's ideal earn bonus points. The closer the match, the higher the score. All songs are ranked from highest to lowest score, and the top results are returned as recommendations.
 
+Algorithm Recipe (finalized):
+Genre match scores +2.0 points, mood match scores +1.0 point, and energy proximity adds between 0 and 1 point based on how close the song's energy is to the user's ideal. Maximum possible score per song is 4.0.
+Potential biases: This system may over-prioritize genre, meaning a high-energy pop song could outscore a perfectly mood-matched lofi track. Songs with no genre or mood match will rarely surface even if their energy is a perfect fit.
+
 ---
 
 ## 4. Data
