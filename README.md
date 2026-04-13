@@ -140,6 +140,11 @@ Describe your scoring logic in plain language.
 
 Try to avoid code in this section, treat it like an explanation to a non programmer.
 
+How The System Works
+This recommender uses content-based filtering, comparing song attributes directly to a user's taste profile. Each Song stores: genre, mood, energy, and tempo_bpm. The UserProfile stores the user's preferred genre, mood, and ideal energy/tempo values. The Recommender scores each song by awarding points for genre match (3pts), mood match (2pts), and proximity of energy and tempo to the user's preferences. Songs are then ranked by score and the top results are returned as recommendations.
+
+
+
 ---
 
 ## 4. Data
