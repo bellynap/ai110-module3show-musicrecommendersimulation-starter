@@ -58,6 +58,9 @@ def load_songs(csv_path: str) -> List[Dict]:
             row['valence'] = float(row['valence'])
             row['danceability'] = float(row['danceability'])
             row['acousticness'] = float(row['acousticness'])
+            row['popularity'] = int(row['popularity'])
+            row['speechiness'] = float(row['speechiness'])
+            row['liveness'] = float(row['liveness'])
             songs.append(row)
     print(f"Loaded songs: {len(songs)}")
     return songs
@@ -130,6 +133,21 @@ def score_song_with_mode(user_prefs: Dict, song: Dict, mode: str = "genre-first"
     energy_score = (1 - abs(song['energy'] - user_prefs['target_energy'])) * energy_weight
     score += energy_score
     reasons.append(f"energy proximity (+{energy_score:.2f})")
+
+    # Popularity bonus (normalized to 0-1)
+    popularity_score = song['popularity'] / 100
+    score += popularity_score * 0.5
+    reasons.append(f"popularity bonus (+{popularity_score * 0.5:.2f})")
+
+    # Detailed mood match
+    if song['detailed_mood'] == user_prefs.get('detailed_mood', ''):
+        score += 1.0
+        reasons.append("detailed mood match (+1.0)")
+
+    # Decade preference
+    if song['release_decade'] == user_prefs.get('preferred_decade', ''):
+        score += 0.5
+        reasons.append("decade match (+0.5)")
 
     return (score, reasons)
 
