@@ -10,6 +10,7 @@ You will implement the functions in recommender.py:
 """
 
 from src.recommender import load_songs, recommend_songs
+from tabulate import tabulate
 
 
 def main() -> None:
@@ -24,11 +25,19 @@ def main() -> None:
 
     recommendations = recommend_songs(user_prefs, songs, k=5)
 
-    print("\nTop recommendations:\n")
-    print(f"{'Rank':<5} {'Title':<25} {'Score':<8} Reasons")
-    print("-" * 70)
-    for i, (song, score, explanation) in enumerate(recommendations, 1):
-        print(f"{i:<5} {song['title']:<25} {score:<8.2f} {explanation}")
+    print(f"\nTop recommendations for: {user_prefs['favorite_genre']} / {user_prefs['favorite_mood']} / energy {user_prefs['target_energy']}\n")
+
+    for mode in ["genre-first", "mood-first", "energy-focused"]:
+        recommendations = recommend_songs(user_prefs, songs, k=5, mode=mode)
+        print(f"\nMode: {mode.upper()}\n")
+        table = []
+        for i, (song, score, explanation) in enumerate(recommendations, 1):
+            table.append([i, song['title'], song['artist'], f"{score:.2f}", explanation])
+        print(tabulate(
+            table,
+            headers=["Rank", "Title", "Artist", "Score", "Reasons"],
+            tablefmt="rounded_outline"
+        ))
 
 
 if __name__ == "__main__":

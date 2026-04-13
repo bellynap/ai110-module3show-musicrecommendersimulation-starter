@@ -81,14 +81,66 @@ def score_song(user_prefs: Dict, song: Dict) -> Tuple[float, List[str]]:
 
     return (score, reasons)
 
-def recommend_songs(user_prefs: Dict, songs: List[Dict], k: int = 5) -> List[Tuple[Dict, float, str]]:
-    """Scores all songs, sorts by score descending, and returns the top k results."""
+def apply_diversity_penalty(scored: List[Tuple[Dict, float, str]], penalty: float = 0.5) -> List[Tuple[Dict, float, str]]:
+    """Applies a penalty to songs whose artist or genre already appears in the top results."""
+    seen_artists = set()
+    seen_genres = set()
+    reranked = []
+
+    for song, score, explanation in scored:
+        artist = song['artist']
+        genre = song['genre']
+        new_score = score
+
+        if artist in seen_artists:
+            new_score -= penalty
+            explanation += f", diversity penalty (-{penalty})"
+        if genre in seen_genres:
+            new_score -= penalty
+            explanation += f", genre diversity penalty (-{penalty})"
+
+        seen_artists.add(artist)
+        seen_genres.add(genre)
+        reranked.append((song, new_score, explanation))
+
+    return sorted(reranked, key=lambda x: x[1], reverse=True)
+
+def score_song_with_mode(user_prefs: Dict, song: Dict, mode: str = "genre-first") -> Tuple[float, List[str]]:
+    """Scores a song using a specified ranking strategy/mode."""
+    score = 0.0
+    reasons = []
+
+    if mode == "genre-first":
+        genre_weight, mood_weight, energy_weight = 2.0, 1.0, 1.0
+    elif mode == "mood-first":
+        genre_weight, mood_weight, energy_weight = 1.0, 2.0, 1.0
+    elif mode == "energy-focused":
+        genre_weight, mood_weight, energy_weight = 0.5, 0.5, 3.0
+    else:
+        genre_weight, mood_weight, energy_weight = 2.0, 1.0, 1.0
+
+    if song['genre'] == user_prefs['favorite_genre']:
+        score += genre_weight
+        reasons.append(f"genre match (+{genre_weight})")
+
+    if song['mood'] == user_prefs['favorite_mood']:
+        score += mood_weight
+        reasons.append(f"mood match (+{mood_weight})")
+
+    energy_score = (1 - abs(song['energy'] - user_prefs['target_energy'])) * energy_weight
+    score += energy_score
+    reasons.append(f"energy proximity (+{energy_score:.2f})")
+
+    return (score, reasons)
+
+def recommend_songs(user_prefs: Dict, songs: List[Dict], k: int = 5, mode: str = "genre-first") -> List[Tuple[Dict, float, str]]:
+    """Scores all songs using the specified mode, applies diversity penalty, and returns top k."""
     scored = []
     for song in songs:
-        score, reasons = score_song(user_prefs, song)
+        score, reasons = score_song_with_mode(user_prefs, song, mode)
         explanation = ", ".join(reasons)
         scored.append((song, score, explanation))
 
     scored = sorted(scored, key=lambda x: x[1], reverse=True)
-
+    scored = apply_diversity_penalty(scored)
     return scored[:k]
