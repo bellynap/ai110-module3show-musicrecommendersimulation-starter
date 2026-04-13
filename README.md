@@ -112,6 +112,31 @@ genre and energy only, surfacing Bass Drop and Neon Pulse. Midnight Rain appeare
 at #3 purely on mood match despite being a country song — an emotionally correct 
 but genre-wrong recommendation.
 
+### Challenge 2: Multiple Scoring Modes
+Three scoring strategies were implemented — Genre-First, Mood-First, and 
+Energy-Focused. Each produces distinct rankings for the same user profile, 
+showing how weight choices fundamentally shape what gets recommended. 
+Energy-Focused mode caused Neon Pulse to enter the top 5 despite having 
+no genre or mood match, purely on energy proximity.
+
+### Challenge 3: Diversity Penalty
+A penalty of -0.5 was applied to any song whose artist or genre already 
+appeared in the top results. Gym Hero's score dropped from 2.87 to 2.37 
+because pop was already represented by Sunrise City at #1. This prevents 
+genre clustering and improves recommendation variety.
+
+### Challenge 4: Visual Summary Table
+The terminal output was upgraded using the `tabulate` library to display 
+a clean formatted table showing rank, title, artist, score, and reasons 
+for each recommendation.
+
+### Challenge 1: Advanced Song Features
+Five new attributes were added to each song: popularity (0-100), 
+release_decade, detailed_mood, speechiness, and liveness. The scoring 
+logic was updated to reward popularity, detailed mood matches, and decade 
+preferences. Scores increased noticeably and rankings shifted to reflect 
+these richer user preferences.
+
 ### Weight Shift Experiment
 
 Doubling the energy weight and halving the genre weight caused Rooftop Lights to 
@@ -124,10 +149,14 @@ recommender, which may not suit all users.
 
 ## Limitations and Risks
 
+## Limitations and Risks
+
 - The catalog is small (18 songs) and unevenly distributed across genres
-- The system does not understand lyrics, language, or cultural context
-- Genre weight dominates scoring, which can create a filter bubble
-- Users whose preferred mood has no matching songs get emotionally wrong results
+- Genre weight dominates scoring in Genre-First mode, creating filter bubbles
+- The diversity penalty is applied post-scoring, so it can still miss subtle 
+  clustering across different attributes
+- Popularity scores may bias results toward mainstream songs regardless of fit
+- Users whose preferred mood or decade has no matching songs get poor results
 - All users are treated as having a single fixed taste — no mixed preferences
 
 ---
