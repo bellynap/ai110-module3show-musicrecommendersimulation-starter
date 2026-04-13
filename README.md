@@ -132,18 +132,11 @@ Example:
 
 ## 3. How It Works (Short Explanation)
 
-Describe your scoring logic in plain language.
-
-- What features of each song does it consider
-- What information about the user does it use
-- How does it turn those into a number
-
-Try to avoid code in this section, treat it like an explanation to a non programmer.
-
 How The System Works
-This recommender uses content-based filtering, comparing song attributes directly to a user's taste profile. Each Song stores: genre, mood, energy, and tempo_bpm. The UserProfile stores the user's preferred genre, mood, and ideal energy/tempo values. The Recommender scores each song by awarding points for genre match (3pts), mood match (2pts), and proximity of energy and tempo to the user's preferences. Songs are then ranked by score and the top results are returned as recommendations.
-
-
+Real-world recommenders like Spotify or TikTok predict what you'll enjoy next by either watching what similar users listen to, or by comparing the actual qualities of songs you've liked. This system uses the second approach — content-based filtering — matching song attributes directly to a user's taste profile.
+Each Song is described by four qualities: its genre (like pop or lofi), its mood (like happy or chill), its energy level (how intense or calm it feels), and its tempo (how fast or slow it is).
+Each UserProfile stores that person's preferred genre, preferred mood, their ideal energy level, and their ideal tempo.
+The Recommender scores every song by checking how well it matches the user. A matching genre earns the most points (3), a matching mood earns slightly fewer (2), and songs whose energy and tempo are closest to the user's ideal earn bonus points. The closer the match, the higher the score. All songs are ranked from highest to lowest score, and the top results are returned as recommendations.
 
 ---
 
